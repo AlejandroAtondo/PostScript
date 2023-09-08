@@ -1,10 +1,7 @@
-import java.util.Collections;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.*;
 
 public class Main {
     public static Stack<Double> stack = new Stack<>();
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -43,7 +40,7 @@ public class Main {
     }
 
     public static boolean esOperador(String token) {
-        return token.matches("add|sub|mul|div|eq|pop|exch|dup|pstack");
+        return token.matches("add|sub|mul|div|eq|pop|exch|dup|pstack|");
     }
 
     public static void realizarOperacion(String operador) {
@@ -54,7 +51,7 @@ public class Main {
                     double operand1 = stack.pop();
                     stack.push(operand1 + operand2);
                 } else {
-                    System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                    System.out.println("Error: no hay suficientes elementos para el operador " + operador);
                 }
                 break;
             case "sub":
@@ -63,7 +60,7 @@ public class Main {
                     double operand1 = stack.pop();
                     stack.push(operand1 - operand2);
                 } else {
-                    System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                    System.out.println("Error: no hay suficientes elementos para el operador " + operador);
                 }
                 break;
             case "mul":
@@ -72,7 +69,7 @@ public class Main {
                     double operand1 = stack.pop();
                     stack.push(operand1 * operand2);
                 } else {
-                    System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                    System.out.println("Error: no hay suficientes elementos para el operador " + operador);
                 }
                 break;
             case "div":
@@ -81,7 +78,7 @@ public class Main {
                     double operand1 = stack.pop();
                     stack.push(operand1 / operand2);
                 } else {
-                    System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                    System.out.println("Error: no hay suficientes elementos para el operador " + operador);
                 }
                 break;
             case "eq":
@@ -93,7 +90,7 @@ public class Main {
                     }else if (operand2 != operand1){
                         stack.push(0.0);
                     }else{
-                        System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                        System.out.println("Error: no hay suficientes elementos para el operador " + operador);
                     }
                     break;
                 }
@@ -102,7 +99,7 @@ public class Main {
                 if (!stack.isEmpty()) {
                     stack.pop();
                 } else {
-                    System.out.println("Error: no hay elementos en la pila para duplicar");
+                    System.out.println("Error: no hay elementos en la pila para eliminar");
                 }
                 break;
             case "exch":
@@ -133,13 +130,18 @@ public class Main {
     }
 
     public static void imprimirPila() {
-        System.out.println("Contenido de la pila:");
-        Stack<Double> reversedStack = new Stack<>();
-        reversedStack.addAll(stack);
-        Collections.reverse(reversedStack);
+        if (!stack.isEmpty()){
+            System.out.println("Contenido de la pila:");
+            Stack<Double> reversedStack = new Stack<>();
+            reversedStack.addAll(stack);
+            Collections.reverse(reversedStack);
 
-        for (Double elemento : reversedStack) {
-            System.out.println(elemento);
+            for (Double elemento : reversedStack) {
+                System.out.println(elemento);
+            }
+        }else{
+            System.out.println("La pila está vacía");
         }
+
     }
 }
