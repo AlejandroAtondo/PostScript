@@ -1,10 +1,12 @@
+import java.util.Collections;
 import java.util.Scanner;
 import java.util.Stack;
 
 public class Main {
+    public static Stack<Double> stack = new Stack<>();
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        Stack<Double> pila = new Stack<>();
 
         while (true) {
             System.out.println("Ingresa la expresión en formato PostScript (o escribe 'quit' para salir): ");
@@ -18,21 +20,12 @@ public class Main {
 
             for (String token : tokens) {
                 if (esNumero(token)) {
-                    pila.push(Double.parseDouble(token));
+                    stack.push(Double.parseDouble(token));
                 } else if (esOperador(token)) {
-                    realizarOperacion(pila, token);
+                    realizarOperacion(token);
                 } else {
                     System.out.println("Error: token no reconocido - " + token);
                     break;
-                }
-            }
-
-            if (!pila.isEmpty()) {
-                double resultadoFinal = pila.pop();
-                if (pila.isEmpty()) {
-                    System.out.println("El resultado es: " + resultadoFinal);
-                } else {
-                    System.out.println("Error: la expresión no pudo ser evaluada correctamente");
                 }
             }
         }
@@ -50,33 +43,103 @@ public class Main {
     }
 
     public static boolean esOperador(String token) {
-        return token.equals("add") || token.equals("mul") || token.equals("sub") ||
-                token.equals("eq") || token.equals("exch") || token.equals("dup");
+        return token.matches("add|sub|mul|div|eq|pop|exch|dup|pstack");
     }
 
-    public static void realizarOperacion(Stack<Double> pila, String operador) {
-        if (pila.size() < 2) {
-            System.out.println("Error: no hay suficientes operandos para el operador " + operador);
-        } else {
-            double operand2 = pila.pop();
-            double operand1 = pila.pop();
-            double resultado = aplicarOperador(operand1, operand2, operador);
-            pila.push(resultado);
+    public static void realizarOperacion(String operador) {
+        switch (operador) {
+            case "add":
+                if (stack.size() >= 2) {
+                    double operand2 = stack.pop();
+                    double operand1 = stack.pop();
+                    stack.push(operand1 + operand2);
+                } else {
+                    System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                }
+                break;
+            case "sub":
+                if (stack.size() >= 2) {
+                    double operand2 = stack.pop();
+                    double operand1 = stack.pop();
+                    stack.push(operand1 - operand2);
+                } else {
+                    System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                }
+                break;
+            case "mul":
+                if (stack.size() >= 2) {
+                    double operand2 = stack.pop();
+                    double operand1 = stack.pop();
+                    stack.push(operand1 * operand2);
+                } else {
+                    System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                }
+                break;
+            case "div":
+                if (stack.size() >= 2) {
+                    double operand2 = stack.pop();
+                    double operand1 = stack.pop();
+                    stack.push(operand1 / operand2);
+                } else {
+                    System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                }
+                break;
+            case "eq":
+                if (stack.size() >= 2) {
+                    double operand2 = stack.pop();
+                    double operand1 = stack.pop();
+                    if (operand2 == operand1){
+                        stack.push(1.0);
+                    }else if (operand2 != operand1){
+                        stack.push(0.0);
+                    }else{
+                        System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                    }
+                    break;
+                }
+                break;
+            case "pop":
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                } else {
+                    System.out.println("Error: no hay elementos en la pila para duplicar");
+                }
+                break;
+            case "exch":
+                if (stack.size() >= 2) {
+                    double operand2 = stack.pop();
+                    double operand1 = stack.pop();
+                    stack.push(operand2);
+                    stack.push(operand1);
+                } else {
+                    System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+                }
+                break;
+            case "dup":
+                if (!stack.isEmpty()) {
+                    double elementoSuperior = stack.peek();
+                    stack.push(elementoSuperior);
+                } else {
+                    System.out.println("Error: no hay elementos en la pila para duplicar");
+                }
+                break;
+            case "pstack":
+                imprimirPila();
+                break;
+            default:
+                System.out.println("Operador no válido: " + operador);
+                break;
         }
     }
 
-    public static double aplicarOperador(double operand1, double operand2, String operador) {
-        switch (operador) {
-            case "add":
-                return operand1 + operand2;
-            case "sub":
-                return operand1 - operand2;
-            case "mul":
-                return operand1 * operand2;
-            case "eq":
-                return operand1 == operand2 ? 1.0 : 0.0;
-            default:
-                throw new IllegalArgumentException("Operador no válido: " + operador);
+    public static void imprimirPila() {
+        System.out.println("Contenido de la pila:");
+        Stack<Double> reversedStack = new Stack<>();
+        reversedStack.addAll(stack);
+        Collections.reverse(reversedStack);
+
+        for (Double elemento : reversedStack) {
+            System.out.println(elemento);
         }
     }
 }
