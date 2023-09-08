@@ -20,25 +20,20 @@ public class Main {
                 if (esNumero(token)) {
                     pila.push(Double.parseDouble(token));
                 } else if (esOperador(token)) {
-                    if (pila.size() < 2) {
-                        System.out.println("Error: no hay suficientes operandos para el operador " + token);
-                        break;
-                    }
-                    double operand2 = pila.pop();
-                    double operand1 = pila.pop();
-                    double resultado = aplicarOperador(operand1, operand2, token);
-                    pila.push(resultado);
+                    realizarOperacion(pila, token);
                 } else {
                     System.out.println("Error: token no reconocido - " + token);
                     break;
                 }
             }
 
-            if (pila.size() == 1) {
+            if (!pila.isEmpty()) {
                 double resultadoFinal = pila.pop();
-                System.out.println("El resultado es: " + resultadoFinal);
-            } else {
-                System.out.println("Error: la expresión no pudo ser evaluada correctamente");
+                if (pila.isEmpty()) {
+                    System.out.println("El resultado es: " + resultadoFinal);
+                } else {
+                    System.out.println("Error: la expresión no pudo ser evaluada correctamente");
+                }
             }
         }
 
@@ -59,23 +54,29 @@ public class Main {
                 token.equals("eq") || token.equals("exch") || token.equals("dup");
     }
 
-    public static double aplicarOperador(double operando1, double operando2, String operador) {
+    public static void realizarOperacion(Stack<Double> pila, String operador) {
+        if (pila.size() < 2) {
+            System.out.println("Error: no hay suficientes operandos para el operador " + operador);
+        } else {
+            double operand2 = pila.pop();
+            double operand1 = pila.pop();
+            double resultado = aplicarOperador(operand1, operand2, operador);
+            pila.push(resultado);
+        }
+    }
+
+    public static double aplicarOperador(double operand1, double operand2, String operador) {
         switch (operador) {
             case "add":
-                return operando1 + operando2;
+                return operand1 + operand2;
             case "sub":
-                return operando1 - operando2;
+                return operand1 - operand2;
             case "mul":
-                return operando1 * operando2;
+                return operand1 * operand2;
             case "eq":
-                if (operando1==operando2){
-                    return operando1 == operando2 ? 1.0 : 0.0;
-                }
-                return operando1 == operando2 ? 1.0 : 0.0;
+                return operand1 == operand2 ? 1.0 : 0.0;
             default:
                 throw new IllegalArgumentException("Operador no válido: " + operador);
         }
     }
-
-
 }
