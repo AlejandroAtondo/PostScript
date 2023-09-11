@@ -2,6 +2,8 @@ import java.util.*;
 
 public class Main {
     public static Stack<Double> stack = new Stack<>();
+    public static Map<String, Double> variables = new HashMap<>();
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -15,11 +17,20 @@ public class Main {
 
             String[] tokens = expresion.split(" ");
 
-            for (String token : tokens) {
+            for (int i = 0; i < tokens.length; i++) {
+                String token = tokens[i];
                 if (esNumero(token)) {
                     stack.push(Double.parseDouble(token));
                 } else if (esOperador(token)) {
                     realizarOperacion(token);
+                } else if (i + 2 < tokens.length && tokens[i + 2].equals("def")) {
+                    String nombreVariable = token;
+                    double valorVariable = Double.parseDouble(tokens[i + 1]);
+                    variables.put(nombreVariable, valorVariable);
+                    i += 2; // Avanzar 3 tokens (nombre, valor, def)
+                } else if (variables.containsKey(token)) {
+                    double valorVariable = variables.get(token);
+                    stack.push(valorVariable);
                 } else {
                     System.out.println("Error: token no reconocido - " + token);
                     break;
