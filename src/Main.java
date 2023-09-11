@@ -1,12 +1,21 @@
 import java.util.*;
-
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.io.IOException;
 public class Main {
     public static Stack<Double> stack = new Stack<>();
     public static Map<String, Double> variables = new HashMap<>();
 
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+    private static FileHandler fileHandler;
+
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
+        FileHandler fileHandler = null;
         while (true) {
             System.out.println("Ingresa la expresión en formato PostScript (o escribe 'quit' para salir): ");
             String expresion = scanner.nextLine();
@@ -39,6 +48,7 @@ public class Main {
         }
 
         scanner.close(); // Cerrar el Scanner al salir del bucle
+        closeLogger();
     }
 
     public static boolean esNumero(String token) {
@@ -154,5 +164,22 @@ public class Main {
             System.out.println("La pila está vacía");
         }
 
+    }
+    private static void configurarLogger() {
+        try {
+            fileHandler = new FileHandler("mi_bitacora.log");
+            SimpleFormatter formato = new SimpleFormatter();
+            fileHandler.setFormatter(formato);
+            logger.addHandler(fileHandler);
+            logger.setLevel(Level.INFO); // Configura el nivel de registro a INFO
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void closeLogger() {
+        if (fileHandler != null) {
+            fileHandler.close();
+        }
     }
 }
